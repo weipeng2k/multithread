@@ -37,7 +37,7 @@ public class HttpTextServer {
 	static ThreadPool<TextHandler> threadPool = new DefaultThreadPool<TextHandler>(
 			10);
 
-	static String basePath = "/home/weipeng/project/multithread";
+	static String basePath = "/home/weipeng/project/multithread/src/main/resources";
 
 	public static void main(String[] args) throws Exception {
 		ServerSocket ss = new ServerSocket(8080);
