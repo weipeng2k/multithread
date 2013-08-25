@@ -36,7 +36,8 @@ public class CyclicBarrierTest {
 
 		@Override
 		public void run() {
-			System.out.println("THIS GROUP IS DONE." + (6 - times) + Thread.currentThread());
+			System.out.println((6 - times) + " GROUP IS DONE."
+					+ Thread.currentThread());
 
 			countDown.countDown();
 
@@ -68,7 +69,8 @@ public class CyclicBarrierTest {
 
 				try {
 					Thread.sleep(interval);
-					System.out.println("COST : " + interval +  " ms. " + Thread.currentThread());
+					System.out.println("COST : " + interval + " ms. "
+							+ Thread.currentThread());
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				} finally {
