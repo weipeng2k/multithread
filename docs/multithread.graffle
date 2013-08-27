@@ -98,7 +98,7 @@
 	<key>MasterSheets</key>
 	<array/>
 	<key>ModificationDate</key>
-	<string>2013-08-25 02:02:50 +0000</string>
+	<string>2013-08-25 02:27:07 +0000</string>
 	<key>Modifier</key>
 	<string>weipeng2k</string>
 	<key>NotesVisible</key>
@@ -174,7 +174,7 @@
 		<key>ExpandedCanvases</key>
 		<array/>
 		<key>Frame</key>
-		<string>{{331, 65}, {693, 813}}</string>
+		<string>{{41, 65}, {693, 813}}</string>
 		<key>ListView</key>
 		<true/>
 		<key>OutlineWidth</key>
