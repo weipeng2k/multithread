@@ -17,6 +17,14 @@ import org.junit.Test;
  */
 public class LockSupportTest {
 
+	public static void main(String[] args) {
+		try {
+			LockSupport.park(Object.class);
+		} finally {
+			System.out.println("dfd");
+		}
+	}
+
 	class FIFOMutex {
 
 		private final AtomicBoolean locked = new AtomicBoolean(false);
