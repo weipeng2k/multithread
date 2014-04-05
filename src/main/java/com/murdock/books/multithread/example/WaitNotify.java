@@ -74,6 +74,14 @@ public class WaitNotify {
 					e.printStackTrace();
 				}
 			}
+			synchronized (OBJ) {
+				System.out.println("I win.");
+				try {
+					Thread.sleep(10000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 }

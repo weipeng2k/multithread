@@ -62,6 +62,7 @@ public class Priority {
 					if (countDownLatch.getCount() > 0) {
 						countDownLatch.countDown();
 						times++;
+						Thread.yield();
 					}
 				}
 			}

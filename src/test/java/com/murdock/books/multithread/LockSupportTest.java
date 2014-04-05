@@ -17,14 +17,6 @@ import org.junit.Test;
  */
 public class LockSupportTest {
 
-	public static void main(String[] args) {
-		try {
-			LockSupport.park(Object.class);
-		} finally {
-			System.out.println("dfd");
-		}
-	}
-
 	class FIFOMutex {
 
 		private final AtomicBoolean locked = new AtomicBoolean(false);
@@ -43,8 +35,9 @@ public class LockSupportTest {
 			}
 
 			waiters.remove();
-			if (wasInterrupted)
+			if (wasInterrupted) {
 				current.interrupt();
+			}
 		}
 
 		public void unlock() {
@@ -65,7 +58,7 @@ public class LockSupportTest {
 				while (true) {
 					lock.lock();
 					try {
-						Thread.sleep(100);
+						Thread.sleep(1000);
 						System.out.println(Thread.currentThread());
 					} catch (Exception ex) {
 
@@ -101,7 +94,10 @@ public class LockSupportTest {
 		thread2.start();
 
 		try {
-			Thread.sleep(5000);
+			for (int i = 0; i < 10; i++) {
+				Thread.sleep(500);
+				System.out.println(".");
+			}
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

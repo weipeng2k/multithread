@@ -26,36 +26,34 @@ public class DefaultThreadPool<Job extends Runnable> implements ThreadPool<Job> 
 	/**
 	 * 线程池最大限制数
 	 */
-	private static final int MAX_WORKER_NUMBERS = 10;
+	private static final int		MAX_WORKER_NUMBERS		= 10;
 	/**
 	 * 线程池默认的数量
 	 */
-	private static final int DEFAULT_WORKER_NUMBERS = 5;
+	private static final int		DEFAULT_WORKER_NUMBERS	= 5;
 	/**
 	 * 线程池最小的数量
 	 */
-	private static final int MIN_WORKER_NUMBERS = 1;
+	private static final int		MIN_WORKER_NUMBERS		= 1;
 	/**
 	 * 这是一个工作列表，将会向里面插入工作
 	 */
-	private final LinkedList<Job> jobs = new LinkedList<Job>();
+	private final LinkedList<Job>	jobs					= new LinkedList<Job>();
 	/**
 	 * 工作者列表
 	 */
-	private final List<Worker> workers = Collections
-			.synchronizedList(new ArrayList<Worker>());
+	private final List<Worker>		workers					= Collections.synchronizedList(new ArrayList<Worker>());
 	/**
 	 * 工作者线程的数量
 	 */
-	private int workerNum = DEFAULT_WORKER_NUMBERS;
+	private int						workerNum				= DEFAULT_WORKER_NUMBERS;
 
 	public DefaultThreadPool() {
 		initializeWokers(DEFAULT_WORKER_NUMBERS);
 	}
 
 	public DefaultThreadPool(int num) {
-		workerNum = num > MAX_WORKER_NUMBERS ? MAX_WORKER_NUMBERS
-				: num < MIN_WORKER_NUMBERS ? MIN_WORKER_NUMBERS : num;
+		workerNum = num > MAX_WORKER_NUMBERS ? MAX_WORKER_NUMBERS : num < MIN_WORKER_NUMBERS ? MIN_WORKER_NUMBERS : num;
 		initializeWokers(workerNum);
 	}
 
@@ -91,12 +89,11 @@ public class DefaultThreadPool<Job extends Runnable> implements ThreadPool<Job> 
 
 	@Override
 	public void addWorkers(int workerNum) {
-		int addedNum = workerNum;
-		if (workerNum + this.workerNum > MAX_WORKER_NUMBERS) {
-			addedNum = MAX_WORKER_NUMBERS - this.workerNum;
-		}
-
 		synchronized (jobs) {
+			int addedNum = workerNum;
+			if (workerNum + this.workerNum > MAX_WORKER_NUMBERS) {
+				addedNum = MAX_WORKER_NUMBERS - this.workerNum;
+			}
 			initializeWokers(addedNum);
 			this.workerNum = this.workerNum + addedNum;
 		}
@@ -105,9 +102,7 @@ public class DefaultThreadPool<Job extends Runnable> implements ThreadPool<Job> 
 	@Override
 	public void removeWorker(int workerNum) {
 		if (workerNum >= this.workerNum) {
-			throw new IllegalArgumentException(
-					"can not remove beyond workerNum. now num is "
-							+ this.workerNum);
+			throw new IllegalArgumentException("can not remove beyond workerNum. now num is " + this.workerNum);
 		}
 
 		synchronized (jobs) {
@@ -149,7 +144,7 @@ public class DefaultThreadPool<Job extends Runnable> implements ThreadPool<Job> 
 		/**
 		 * 工作
 		 */
-		private volatile boolean running = true;
+		private volatile boolean	running	= true;
 
 		@Override
 		public void run() {

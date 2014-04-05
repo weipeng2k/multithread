@@ -34,10 +34,9 @@ import java.net.Socket;
  */
 public class HttpTextServer {
 
-	static ThreadPool<TextHandler> threadPool = new DefaultThreadPool<TextHandler>(
-			10);
+	static ThreadPool<TextHandler>	threadPool	= new DefaultThreadPool<TextHandler>(10);
 
-	static String basePath = "/home/weipeng/project/multithread/src/main/resources";
+	static String					basePath	= "/Users/weipeng2k/Documents/arena/multithread/src/main/resources";
 
 	public static void main(String[] args) throws Exception {
 		ServerSocket ss = new ServerSocket(8080);
@@ -51,7 +50,7 @@ public class HttpTextServer {
 
 	static class TextHandler implements Runnable {
 
-		private Socket socket;
+		private Socket	socket;
 
 		public TextHandler(Socket socket) {
 			this.socket = socket;
@@ -65,27 +64,25 @@ public class HttpTextServer {
 			PrintWriter out = null;
 			InputStream in = null;
 			try {
-				reader = new BufferedReader(new InputStreamReader(
-						socket.getInputStream()));
-
+				reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 				String header = reader.readLine();
 				String filePath = basePath + header.split(" ")[1];
 
 				if (filePath.contains("jpg") || filePath.contains("ico")) {
 					in = new FileInputStream(filePath);
-					
+
 					ByteArrayOutputStream baos = new ByteArrayOutputStream();
 					try {
 						int i = 0;
 						while ((i = in.read()) != -1) {
 							baos.write(i);
 						}
-					} catch (Exception  ex) {
+					} catch (Exception ex) {
 						ex.printStackTrace();
 					}
-					
+
 					byte[] array = baos.toByteArray();
-					
+
 					out = new PrintWriter(socket.getOutputStream());
 
 					out.println("HTTP/1.1 200 OK");
@@ -93,14 +90,13 @@ public class HttpTextServer {
 					out.println("Content-Length: " + array.length);
 					out.println("Server: SimpleMolly");
 					out.println("");
-					
+
 					socket.getOutputStream().write(array, 0, array.length);
-					
+
 					out.flush();
 				} else {
 
-					br = new BufferedReader(new InputStreamReader(
-							new FileInputStream(filePath)));
+					br = new BufferedReader(new InputStreamReader(new FileInputStream(filePath)));
 					out = new PrintWriter(socket.getOutputStream());
 
 					out.println("HTTP/1.1 200 OK");
