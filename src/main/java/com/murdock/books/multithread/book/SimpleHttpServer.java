@@ -68,7 +68,7 @@ public class SimpleHttpServer {
 				String filePath = basePath + header.split(" ")[1];
 				out = new PrintWriter(socket.getOutputStream());
 				// 如果请求资源的后缀为jpg或者ico，则读取资源并输出
-				if (filePath.contains("jpg") || filePath.contains("ico")) {
+				if (filePath.endsWith("jpg") || filePath.endsWith("ico")) {
 					in = new FileInputStream(filePath);
 					ByteArrayOutputStream baos = new ByteArrayOutputStream();
 					int i = 0;
