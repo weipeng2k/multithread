@@ -8,8 +8,8 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 public class WaitNotify {
-	static boolean flag = true;
-	static Object lock = new Object();
+	static boolean	flag	= true;
+	static Object	lock	= new Object();
 
 	public static void main(String[] args) throws Exception {
 		Thread waitThread = new Thread(new Wait(), "WaitThread");
@@ -50,19 +50,13 @@ public class WaitNotify {
 						+ new SimpleDateFormat("HH:mm:ss").format(new Date()));
 				lock.notifyAll();
 				flag = false;
-				try {
-					Thread.sleep(5000);
-				} catch (InterruptedException e) {
-				}
+				SleepUtils.second(5);
 			}
 			// 再次加锁
 			synchronized (lock) {
 				System.out.println(Thread.currentThread() + " hold lock again. sleep @ "
 						+ new SimpleDateFormat("HH:mm:ss").format(new Date()));
-				try {
-					Thread.sleep(5000);
-				} catch (InterruptedException e) {
-				}
+				SleepUtils.second(5);
 			}
 		}
 	}

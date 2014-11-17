@@ -33,11 +33,7 @@ public class Deprecated {
 			DateFormat format = new SimpleDateFormat("HH:mm:ss");
 			while (true) {
 				System.out.println(Thread.currentThread().getName() + " Run at " + format.format(new Date()));
-				try {
-					TimeUnit.SECONDS.sleep(1);
-				} catch (InterruptedException ex) {
-					ex.printStackTrace();
-				}
+				SleepUtils.second(1); 
 			}
 		}
 	}

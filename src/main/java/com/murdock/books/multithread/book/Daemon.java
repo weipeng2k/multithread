@@ -1,6 +1,5 @@
 package com.murdock.books.multithread.book;
 
-import java.util.concurrent.TimeUnit;
 
 public class Daemon {
 
@@ -14,9 +13,7 @@ public class Daemon {
 		@Override
 		public void run() {
 			try {
-				TimeUnit.SECONDS.sleep(10);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+				SleepUtils.second(100); 
 			} finally {
 				System.out.println("DaemonThread finally run.");
 			}

@@ -29,10 +29,7 @@ public class Interrupted {
 		@Override
 		public void run() {
 			while (true) {
-				try {
-					TimeUnit.SECONDS.sleep(10);
-				} catch (InterruptedException ex) {
-				}
+				SleepUtils.second(10); 
 			}
 		}
 	}

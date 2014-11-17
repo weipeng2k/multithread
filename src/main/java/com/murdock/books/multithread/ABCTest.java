@@ -48,6 +48,7 @@ public class ABCTest {
                     synchronized (self) {
                         self.wait();
                         System.out.print(content);
+                        Thread.sleep(100);
                         synchronized (next) {
                             next.notify();
                         }

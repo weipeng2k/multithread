@@ -9,75 +9,58 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 
 public class TwinsLock implements Lock {
-	private static final Sync sync = new Sync();
-
+	private final Sync	sync	= new Sync(2);
 	private static final class Sync extends AbstractQueuedSynchronizer {
-		private static final long serialVersionUID = -7889272986162341211L;
-		{
-			setState(2);
+		private static final long	serialVersionUID	= -7889272986162341211L;
+		Sync(int count) {
+			if (count <= 0) {
+				throw new IllegalArgumentException("count must large than zero.");
+			}
+			setState(count);
 		}
-
-		protected boolean tryAcquire(int arg) {
-			if (arg != 1) {
-				return false;
-			}
-			int currentStats = getState();
-			if (currentStats <= 0) {
-				return false;
-			}
-			if (compareAndSetState(currentStats, currentStats - 1)) {
-				setExclusiveOwnerThread(Thread.currentThread());
-				return true;
-			}
-			return false;
-		}
-
-		protected boolean tryRelease(int arg) {
-			if (arg != 1) {
-				return false;
-			}
+		public int tryAcquireShared(int reduceCount) {
 			for (;;) {
-				int currentStats = getState();
-				if (compareAndSetState(currentStats, currentStats + 1)) {
-					setExclusiveOwnerThread(null);
+				int current = getState();
+				int newCount = current - reduceCount;
+				if (newCount < 0 || compareAndSetState(current, newCount)) {
+					return newCount;
+				}
+			}
+		}
+		public boolean tryReleaseShared(int returnCount) {
+			for (;;) {
+				int current = getState();
+				int newCount = current + returnCount;
+				if (compareAndSetState(current, newCount)) {
 					return true;
 				}
 			}
 		}
-
-		protected boolean isHeldExclusively() {
-			return getState() < 2;
-		}
-
-		final ConditionObject newCondition() {
-			return new ConditionObject();
-		}
-
 	}
 
 	public void lock() {
-		sync.acquire(1);
-	}
-
-	public void lockInterruptibly() throws InterruptedException {
-		sync.acquireInterruptibly(1);
-	}
-
-	public boolean tryLock() {
-		return sync.tryAcquire(1);
-	}
-
-	public boolean tryLock(long time, TimeUnit unit)
-			throws InterruptedException {
-		return sync.tryAcquireNanos(1, unit.toNanos(time));
+		sync.acquireShared(1);
 	}
 
 	public void unlock() {
-		sync.release(1);
+		sync.releaseShared(1);
 	}
+
+	public void lockInterruptibly() throws InterruptedException {
+		sync.acquireSharedInterruptibly(1);
+	}
+
+	public boolean tryLock() {
+		return sync.tryAcquireShared(1) >= 0;
+	}
+
+	public boolean tryLock(long time, TimeUnit unit) throws InterruptedException {
+		return sync.tryAcquireSharedNanos(1, unit.toNanos(time));
+	}
+
 
 	@Override
 	public Condition newCondition() {
-		return sync.newCondition();
+		return null;
 	}
 }
