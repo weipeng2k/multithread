@@ -6,8 +6,8 @@ package com.murdock.books.multithread;
  */
 public class App {
 	public static void main(String[] args) {
-		while (true) {
-			
-		}
+		int i = 3;
+		System.out.println(i >>> 1);
+		System.out.println(i);
 	}
 }

@@ -13,15 +13,50 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.junit.Test;
 
+import com.murdock.books.multithread.book.SleepUtils;
+
 /**
  * @author weipeng2k
  * 
  */
 public class ConditionTest {
 
-	private static Lock lock = new ReentrantLock();
+	private static Lock			lock		= new ReentrantLock();
 
-	private static Condition condition = lock.newCondition();
+	private static Condition	condition	= lock.newCondition();
+
+	@Test
+	public void testWaitUntil() throws Exception {
+		lock.lock();
+		try {
+			Calendar calendar = Calendar.getInstance();
+			calendar.add(Calendar.SECOND, 2);
+			final Thread current = Thread.currentThread();
+			new Thread() {
+				public void run() {
+					SleepUtils.second(1);
+					current.interrupt();
+				}
+			}.start();
+			System.out.println(condition.awaitUntil(calendar.getTime()));
+		} finally {
+			lock.unlock();
+		}
+	}
+
+	@Test(expected = Exception.class)
+	public void testEarlyAwait() {
+		try {
+			condition.await();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	public void testEarlySignal() {
+		condition.signal();
+	}
 
 	@Test
 	public void testAwaitNanos() {
