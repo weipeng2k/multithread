@@ -15,6 +15,7 @@ import org.junit.Test;
 
 /**
  * @author weipeng
+ * @author weipeng2k
  */
 public class FutureTaskTest {
 	ExecutorService es = Executors.newFixedThreadPool(10);

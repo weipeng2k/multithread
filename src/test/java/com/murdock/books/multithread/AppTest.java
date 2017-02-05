@@ -1,5 +1,6 @@
 package com.murdock.books.multithread;
 
+import java.time.Instant;
 import java.util.concurrent.TimeUnit;
 
 import junit.framework.Test;
@@ -36,5 +37,11 @@ public class AppTest extends TestCase {
 	
 	public static void main(String[] args) throws Exception {
 		TimeUnit.SECONDS.sleep(30);
+	}
+
+	@org.junit.Test
+	public void testTime() {
+		System.out.println(System.nanoTime());
+		System.out.println(Instant.now().getNano());
 	}
 }
