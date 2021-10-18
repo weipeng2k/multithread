@@ -12,6 +12,7 @@ public class ABCTest {
         Object a = new Object();
         Object b = new Object();
         Object c = new Object();
+        // a -> b -> c -> a
         Print p1 = new Print("A", a, b);
         Print p2 = new Print("B", b, c);
         Print p3 = new Print("C", c, a);
@@ -26,7 +27,6 @@ public class ABCTest {
             a.notifyAll();
         }
     }
-
 
     static class Print implements Runnable {
         String content;
@@ -47,8 +47,11 @@ public class ABCTest {
                 try {
                     synchronized (self) {
                         self.wait();
+                        // 如果唤醒，则开始打印自己的内容
                         System.out.print(content);
-                        Thread.sleep(100);
+                        // 睡眠，打印输出时有效果
+                        Thread.sleep(300);
+                        // 通知唤醒下一个节点
                         synchronized (next) {
                             next.notify();
                         }

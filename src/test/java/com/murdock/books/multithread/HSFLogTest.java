@@ -1,5 +1,6 @@
 package com.murdock.books.multithread;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.BufferedReader;
@@ -8,6 +9,7 @@ import java.io.FileReader;
 /**
  * Created by weipeng2k on 16/8/19.
  */
+@Ignore
 public class HSFLogTest {
 
     @Test
