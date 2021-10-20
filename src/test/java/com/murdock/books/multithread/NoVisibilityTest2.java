@@ -6,13 +6,15 @@ package com.murdock.books.multithread;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.IntStream;
 
 /**
  * @author weipeng
  * 
  */
-public class NoVisibilityTest {
+public class NoVisibilityTest2 {
 	private static boolean ready;
 	private static int number;
 
@@ -20,6 +22,13 @@ public class NoVisibilityTest {
 
 		public void run() {
 			while (!ready) {
+				Lock lock = new ReentrantLock();
+				lock.lock();
+				try {
+
+				} finally {
+					lock.unlock();
+				}
 			}
 			System.out.println(number);
 		}
