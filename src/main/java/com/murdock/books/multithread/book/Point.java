@@ -9,7 +9,7 @@ public class Point {
     private final StampedLock sl = new StampedLock();
     private double x, y;
 
-    // an exclusively locked method
+    // 排他的锁定方法
     void move(double deltaX, double deltaY) {
         long stamp = sl.writeLock();
         try {
@@ -20,8 +20,8 @@ public class Point {
         }
     }
 
-    // a read-only method
-    // upgrade from optimistic read to read lock
+    // 只读方法
+    // 如果乐观读失效，将会晋升到读模式
     double distanceFromOrigin() {
         long stamp = sl.tryOptimisticRead();
         try {
@@ -44,7 +44,7 @@ public class Point {
         }
     }
 
-    // upgrade from optimistic read to write lock
+    // 从乐观读升级到写
     void moveIfAtOrigin(double newX, double newY) {
         long stamp = sl.tryOptimisticRead();
         try {
@@ -77,7 +77,7 @@ public class Point {
         }
     }
 
-    // Upgrade read lock to write lock
+    // 从读升级到写
     void moveIfAtOrigin2(double newX, double newY) {
         long stamp = sl.readLock();
         try {
