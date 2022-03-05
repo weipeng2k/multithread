@@ -13,13 +13,13 @@ public class StampedLockJMHTest {
 
     @Setup
     public void fill() {
-       Cache.put("A", "B");
+//       RWLCache.put("A", "B");
        CacheStamp.put("A", "B");
     }
 
     @Benchmark
     public void readWriteLock() {
-        Cache.get("A");
+//        RWLCache.get("A");
     }
 
     @Benchmark
