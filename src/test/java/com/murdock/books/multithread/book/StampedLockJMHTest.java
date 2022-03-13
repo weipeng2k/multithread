@@ -11,20 +11,23 @@ import org.openjdk.jmh.annotations.State;
 @State(Scope.Benchmark)
 public class StampedLockJMHTest {
 
+    private Cache<String, String> rwlCache = new RWLCache<>();
+    private Cache<String, String> slCache = new SLCache<>();
+
     @Setup
     public void fill() {
-//       RWLCache.put("A", "B");
-       CacheStamp.put("A", "B");
+        rwlCache.put("A", "B");
+        slCache.put("A", "B");
     }
 
     @Benchmark
     public void readWriteLock() {
-//        RWLCache.get("A");
+        rwlCache.get("A");
     }
 
     @Benchmark
     public void stampedLock() {
-        CacheStamp.get("A");
+        slCache.get("A");
     }
 
 

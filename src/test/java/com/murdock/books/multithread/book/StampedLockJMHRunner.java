@@ -6,9 +6,9 @@ import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
 /**
- * Benchmark                          Mode  Cnt           Score          Error  Units
- * StampedLockJMHTest.readWriteLock  thrpt    9     5122977.127 ±    97802.843  ops/s
- * StampedLockJMHTest.stampedLock    thrpt    9  6631512202.228 ± 90757983.241  ops/s
+ * Benchmark                          Mode  Cnt          Score          Error  Units
+ * StampedLockJMHTest.readWriteLock  thrpt    9    5166194.657 ±   235170.493  ops/s
+ * StampedLockJMHTest.stampedLock    thrpt    9  828896328.843 ± 22702892.910  ops/s
  *
  * @author weipeng2k 2022年02月19日 下午22:19:25
  */
