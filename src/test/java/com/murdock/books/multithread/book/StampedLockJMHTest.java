@@ -29,6 +29,4 @@ public class StampedLockJMHTest {
     public void stampedLock() {
         slCache.get("A");
     }
-
-
 }

@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.StampedLock;
 import java.util.stream.IntStream;
 
@@ -119,6 +120,42 @@ public class StampedLockTest {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    @Test
+    public void thread_5() throws Exception {
+        Thread threadA = new Thread(() -> {
+            stampedLock.writeLock();
+        }, "A");
+        threadA.start();
+        TimeUnit.SECONDS.sleep(1);
+
+        Thread threadB = new Thread(() -> {
+            stampedLock.readLock();
+        }, "B");
+        threadB.start();
+        TimeUnit.SECONDS.sleep(1);
+
+        Thread threadC = new Thread(() -> {
+            stampedLock.readLock();
+        }, "C");
+        threadC.start();
+        TimeUnit.SECONDS.sleep(1);
+
+        Thread threadD = new Thread(() -> {
+            stampedLock.readLock();
+        }, "D");
+        threadD.start();
+        TimeUnit.SECONDS.sleep(1);
+
+        Thread threadE = new Thread(() -> {
+            stampedLock.writeLock();
+        }, "E");
+        threadE.start();
+        TimeUnit.SECONDS.sleep(1);
+
+        System.out.println(stampedLock);
+
     }
 
     /**
