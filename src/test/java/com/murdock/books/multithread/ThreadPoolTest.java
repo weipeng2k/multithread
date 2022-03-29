@@ -24,6 +24,13 @@ public class ThreadPoolTest {
 	 */
 	static ThreadPool<NoPrint> threadPoolNoPrint = new DefaultThreadPool<NoPrint>();
 
+//	@Test
+//	public void worker() {
+//		threadPoolPrint.removeWorker(2);
+//		threadPoolPrint.removeWorker(2);
+//		System.out.println(threadPoolPrint.getJobSize());
+//	}
+
 	@Test
 	public void testExe() {
 		for (int i = 0; i < 1000; i++) {

@@ -19,7 +19,7 @@ public class InterruptTest {
 
 	@Test
 	public void test() throws Exception {
-		Thread t = new Thread(new Run());
+		Thread t = new Thread(new Run(), "Test");
 		t.start();
 		
 		Thread.sleep(1000);

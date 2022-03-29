@@ -1,70 +1,49 @@
 /**
- * 
+ *
  */
 package com.murdock.books.multithread.example;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedList;
-import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * <pre>
  * 默认的线程池实现，可以新增工作线程也可以减少工作线程
- * 
+ *
  * 当然提交JOB后会进入队列中，而Worker进行消费
- * 
+ *
  * 这是一个简单的生产和消费者模式
- * 
+ *
  * </pre>
- * 
+ *
  * @author weipeng
- * 
+ *
  */
 public class DefaultThreadPool<Job extends Runnable> implements ThreadPool<Job> {
-
-	/**
-	 * 线程池最大限制数
-	 */
-	private static final int		MAX_WORKER_NUMBERS		= 10;
-	/**
-	 * 线程池默认的数量
-	 */
-	private static final int		DEFAULT_WORKER_NUMBERS	= 5;
-	/**
-	 * 线程池最小的数量
-	 */
-	private static final int		MIN_WORKER_NUMBERS		= 1;
-	/**
-	 * 这是一个工作列表，将会向里面插入工作
-	 */
-	private final LinkedList<Job>	jobs					= new LinkedList<Job>();
-	/**
-	 * 工作者列表
-	 */
-	private final List<Worker>		workers					= Collections.synchronizedList(new ArrayList<Worker>());
-	/**
-	 * 工作者线程的数量
-	 */
-	private int						workerNum				= DEFAULT_WORKER_NUMBERS;
+	// 线程池最大限制数
+	private static final int MAX_WORKER_NUMBERS = 10;
+	// 线程池默认的数量
+	private static final int DEFAULT_WORKER_NUMBERS = 5;
+	// 线程池最小的数量
+	private static final int MIN_WORKER_NUMBERS = 1;
+	// 这是一个工作列表，将会向里面插入工作
+	private final LinkedList<Job> jobs = new LinkedList<>();
+	// 工作者列表
+	private final LinkedList<Worker> workers = new LinkedList<>();
+	// 线程编号生成
+	private final AtomicLong threadNum = new AtomicLong();
+	// 工作者线程的数量
+	private int workerNum = DEFAULT_WORKER_NUMBERS;
 
 	public DefaultThreadPool() {
-		initializeWokers(DEFAULT_WORKER_NUMBERS);
+		initializeWorkers(DEFAULT_WORKER_NUMBERS);
 	}
 
 	public DefaultThreadPool(int num) {
-		workerNum = num > MAX_WORKER_NUMBERS ? MAX_WORKER_NUMBERS : num < MIN_WORKER_NUMBERS ? MIN_WORKER_NUMBERS : num;
-		initializeWokers(workerNum);
+		workerNum = num > MAX_WORKER_NUMBERS ? MAX_WORKER_NUMBERS : Math.max(num, MIN_WORKER_NUMBERS);
+		initializeWorkers(workerNum);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.murdock.books.multithread.example.ThreadPool#execute(java.lang.Runnable
-	 * )
-	 */
-	@Override
 	public void execute(Job job) {
 		if (job != null) {
 			// 添加一个工作，然后进行通知
@@ -75,93 +54,66 @@ public class DefaultThreadPool<Job extends Runnable> implements ThreadPool<Job> 
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.murdock.books.multithread.example.ThreadPool#shutdown()
-	 */
-	@Override
-	public void shutdown() {
-		for (Worker worker : workers) {
-			worker.shutdown();
-		}
+	public synchronized void shutdown() {
+		removeWorker(workerNum);
 	}
 
-	@Override
-	public void addWorkers(int workerNum) {
-		synchronized (jobs) {
-			int addedNum = workerNum;
-			if (workerNum + this.workerNum > MAX_WORKER_NUMBERS) {
-				addedNum = MAX_WORKER_NUMBERS - this.workerNum;
-			}
-			initializeWokers(addedNum);
-			this.workerNum = this.workerNum + addedNum;
+	public synchronized void addWorkers(int num) {
+		// 限制新增的Worker数量不能超过最大值
+		if (num + this.workerNum > MAX_WORKER_NUMBERS) {
+			num = MAX_WORKER_NUMBERS - this.workerNum;
 		}
+		initializeWorkers(num);
+		this.workerNum += num;
 	}
 
-	@Override
-	public void removeWorker(int workerNum) {
-		if (workerNum >= this.workerNum) {
-			throw new IllegalArgumentException("can not remove beyond workerNum. now num is " + this.workerNum);
+	public synchronized void removeWorker(int num) {
+		if (num > this.workerNum) {
+			throw new IllegalArgumentException("beyond workNum");
 		}
-
-		synchronized (jobs) {
-			int count = 0;
-			while (count < workerNum) {
-				workers.get(count).shutdown();
-				count++;
-			}
-
-			this.workerNum = this.workerNum - count;
+		// 按照给定的数量停止Worker
+		int count = 0;
+		while (count < num) {
+			workers.removeFirst().shutdown();
+			count++;
 		}
+		this.workerNum -= count;
+
 	}
 
-	@Override
 	public int getJobSize() {
 		return jobs.size();
 	}
 
-	/**
-	 * 初始化线程工作者
-	 */
-	private void initializeWokers(int num) {
+	// 初始化线程工作者
+	private void initializeWorkers(int num) {
 		for (int i = 0; i < num; i++) {
 			Worker worker = new Worker();
-			workers.add(worker);
-
-			Thread thread = new Thread(worker);
+			workers.addLast(worker);
+			Thread thread = new Thread(worker, "ThreadPool-Worker-" + threadNum.incrementAndGet());
 			thread.start();
 		}
 	}
 
-	/**
-	 * <pre>
-	 * 工作者，负责消费任务
-	 * 
-	 * </pre>
-	 */
+	// 工作者，负责消费任务
 	class Worker implements Runnable {
-		/**
-		 * 工作
-		 */
-		private volatile boolean	running	= true;
+		// 是否工作
+		private volatile boolean running = true;
 
-		@Override
 		public void run() {
 			while (running) {
-
 				Job job = null;
 				synchronized (jobs) {
-					// 如果工作者列表是空的，那么就wait，放弃cpu执行占用
+					// 如果工作者列表是空的，那么就wait
 					while (jobs.isEmpty()) {
 						try {
 							jobs.wait();
 						} catch (InterruptedException ex) {
+							// 感知到外部对WorkerThread的中断操作，返回
 							Thread.currentThread().interrupt();
 							return;
 						}
 					}
-
 					// 取出一个Job
 					job = jobs.removeFirst();
 				}
@@ -169,7 +121,7 @@ public class DefaultThreadPool<Job extends Runnable> implements ThreadPool<Job> 
 					try {
 						job.run();
 					} catch (Exception ex) {
-						ex.printStackTrace();
+						// 忽略Job执行中的Exception
 					}
 				}
 			}
@@ -178,6 +130,5 @@ public class DefaultThreadPool<Job extends Runnable> implements ThreadPool<Job> 
 		public void shutdown() {
 			running = false;
 		}
-
 	}
 }

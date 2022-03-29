@@ -17,6 +17,8 @@ public class Interrupted {
 		TimeUnit.SECONDS.sleep(5);
 		sleepThread.interrupt();
 		busyThread.interrupt();
+		// 休眠1秒，确保主线程能够看到结果
+		TimeUnit.SECONDS.sleep(1);
 		System.out.println("SleepThread interrupted is "
 				+ sleepThread.isInterrupted());
 		System.out.println("BusyThread interrupted is "
